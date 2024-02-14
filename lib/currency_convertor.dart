@@ -124,23 +124,9 @@ class CurrencyConvertor extends StatelessWidget {
               children: [
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Age',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                      const SizedBox(height: 8.0),
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          hintText: 'Enter your age',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
+                      Image.network(
+                          'https://img.freepik.com/free-vector/man-character-standing-icon_24877-81729.jpg?w=740&t=st=1707931122~exp=1707931722~hmac=1553a89edb59ee28733542562bd1075785b97931ddde25e289b31ea71b05be79')
                     ],
                   ),
                 ),
@@ -196,6 +182,24 @@ class CurrencyConvertor extends StatelessWidget {
                 // Add more Expanded widgets for additional options
               ],
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 300,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                    ),
+                    onPressed: () {},
+                    child: const Text(
+                      'Calculate',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                )
+              ],
+            )
           ],
         ),
       ),
