@@ -128,7 +128,8 @@ class CurrencyConvertor extends StatelessWidget {
                         ),
                       ),
                       child: Image.network(
-                          'https://img.freepik.com/free-vector/man-character-standing-icon_24877-81729.jpg?w=740&t=st=1707931122~exp=1707931722~hmac=1553a89edb59ee28733542562bd1075785b97931ddde25e289b31ea71b05be79'),
+                        'https://img.freepik.com/free-vector/man-character-standing-icon_24877-81729.jpg?w=740&t=st=1707931122~exp=1707931722~hmac=1553a89edb59ee28733542562bd1075785b97931ddde25e289b31ea71b05be79',
+                      ),
                     ),
                   ),
                   //Right Side Column Begins
@@ -168,12 +169,18 @@ class CurrencyConvertor extends StatelessWidget {
                           const SizedBox(
                             height: 24.0,
                           ),
-                          const Text(
-                            'Height',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0,
-                            ),
+                          const Row(
+                            children: [
+                              Text(
+                                'Height',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                              Spacer(),
+                              DropDown(),
+                            ],
                           ),
                           const SizedBox(height: 8.0),
                           SizedBox(
@@ -190,12 +197,18 @@ class CurrencyConvertor extends StatelessWidget {
                           const SizedBox(
                             height: 24.0,
                           ),
-                          const Text(
-                            'Height',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0,
-                            ),
+                          const Row(
+                            children: [
+                              Text(
+                                'Height',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                              Spacer(),
+                              DropDown(),
+                            ],
                           ),
                           const SizedBox(height: 8.0),
                           SizedBox(
@@ -251,6 +264,31 @@ class CurrencyConvertor extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class DropDown extends StatelessWidget {
+  const DropDown({super.key});
+  final String selectedUnit = 'cm';
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      value: selectedUnit,
+      onChanged: (String? newValue) {
+        // if (newValue != null) {
+        //   setState(() {
+        //     selectedUnit = newValue;
+        //   });
+        // }
+      },
+      items: <String>['cm', 'm'].map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
     );
   }
 }
