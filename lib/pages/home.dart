@@ -1,62 +1,46 @@
 import 'package:flutter/material.dart';
-import './profile_page.dart';
-import './test_page.dart';
+import 'bmi_result.dart';
 
+/// Defined the Primary, Seconday and the Tertiary Color for the App.
 Color primaryColor = const Color.fromARGB(255, 201, 139, 139);
 Color secondaryColor = const Color.fromARGB(255, 57, 67, 161);
-
 Color hintColor = const Color.fromARGB(255, 227, 191, 191);
 
-class CurrencyConvertor extends StatefulWidget {
-  const CurrencyConvertor({super.key});
+/// Setting all the state variables.
+int age = 0;
+double weight = 0.0;
+double height = 0.0;
+String weightUnit = 'kg';
+String heightUnit = 'cm';
+
+/// Home screen that allows users to input their BMI parameters
+/// We need to play with the states, thats why Home is using the StatefulWidget
+class Home extends StatefulWidget {
+  const Home({super.key});
   @override
-  _CurrencyConvertorState createState() => _CurrencyConvertorState();
+  _HomeState createState() => _HomeState();
 }
 
-class _CurrencyConvertorState extends State<CurrencyConvertor> {
-  String selectedGender = 'male'; // Initially set to 'male'
+class _HomeState extends State<Home> {
+  ///Initially setting gender to male.
+  String selectedGender = 'male';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
         leadingWidth: 100,
-        backgroundColor: const Color.fromARGB(255, 201, 139, 139),
-        title: const Text(
+        title: Text(
           "BMI Calculator",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-        ),
-        leading: TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const TestPage(),
-              ),
-            );
-          },
-          child: const Text(
-            "Test",
-          ),
+          style: TextStyle(
+              fontSize: 18, fontWeight: FontWeight.w700, color: secondaryColor),
         ),
         centerTitle: true,
         toolbarHeight: 80,
-        actions: [
-          IconButton(
-            icon: const CircleAvatar(),
-            onPressed: () {
-              //Navigate to Profile Page
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfilePage(),
-                ),
-              );
-            },
-          ),
-        ],
       ),
+
+      /// I have used SingleChildScrollView Widget to prevent the Widget's overflow by allowing the body to be scrollable.
+      /// When User press the inputbox, then the keyboard will popup. This might lead to overflow. So, to prevent it, I have used this widget.
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.all(24),
@@ -110,7 +94,43 @@ class _CurrencyConvertorState extends State<CurrencyConvertor> {
                         ),
                       ),
                       onPressed: () {
-                        // Add your button onPressed functionality here
+                        List<String> missingFields = [];
+
+                        // Check which fields are missing
+                        if (age == 0) {
+                          missingFields.add('Age');
+                        }
+                        if (weight == 0.0) {
+                          missingFields.add('Weight');
+                        }
+                        if (height == 0.0) {
+                          missingFields.add('Height');
+                        }
+                        if (missingFields.isNotEmpty) {
+                          String errorMessage =
+                              'Please fill the following fields: ${missingFields.join(', ')}';
+                          // Show error message
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(errorMessage),
+                            ),
+                          );
+                        } else {
+                          //Calculate BMI
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BmiResult(
+                                age: age,
+                                gender: selectedGender,
+                                weight: weight,
+                                height: height,
+                                weightUnit: weightUnit,
+                                heightUnit: heightUnit,
+                              ),
+                            ),
+                          );
+                        }
                       },
                       child: const Text(
                         'Calculate Button',
@@ -149,6 +169,7 @@ class _WeightUnitDropDownState extends State<WeightUnitDropDown> {
         if (newValue != null) {
           setState(() {
             selectedUnit = newValue;
+            weightUnit = selectedUnit;
           });
         }
       },
@@ -181,6 +202,7 @@ class _HeightUnitDropDownState extends State<HeightUnitDropDown> {
         if (newValue != null) {
           setState(() {
             selectedUnit = newValue;
+            heightUnit = selectedUnit;
           });
         }
       },
@@ -329,9 +351,13 @@ class LeftSideColumn extends StatelessWidget {
   }
 }
 
-class RightSideColumn extends StatelessWidget {
+class RightSideColumn extends StatefulWidget {
   const RightSideColumn({super.key});
+  @override
+  _RightSideColumnState createState() => _RightSideColumnState();
+}
 
+class _RightSideColumnState extends State<RightSideColumn> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -359,6 +385,13 @@ class RightSideColumn extends StatelessWidget {
             const SizedBox(height: 8.0),
             SizedBox(
               child: TextFormField(
+                onChanged: (value) {
+                  setState(
+                    () {
+                      age = int.tryParse(value) ?? 0;
+                    },
+                  );
+                },
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
                   hintText: '32',
@@ -398,6 +431,11 @@ class RightSideColumn extends StatelessWidget {
             SizedBox(
               width: double.maxFinite,
               child: TextFormField(
+                onChanged: (value) {
+                  setState(() {
+                    weight = double.tryParse(value) ?? 0.0;
+                  });
+                },
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
                   hintText: '65',
@@ -437,6 +475,11 @@ class RightSideColumn extends StatelessWidget {
             SizedBox(
               width: double.maxFinite,
               child: TextFormField(
+                onChanged: (value) {
+                  setState(() {
+                    height = double.tryParse(value) ?? 0;
+                  });
+                },
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
                   hintText: '179',
