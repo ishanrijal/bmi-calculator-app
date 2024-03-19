@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+///This is the third screen of our application. This is a static screen that contains information regarding the BMI.
+
 Color primaryColor = const Color.fromARGB(255, 201, 139, 139);
 Color secondaryColor = const Color.fromARGB(255, 57, 67, 161);
 Color hintColor = const Color.fromARGB(255, 227, 191, 191);

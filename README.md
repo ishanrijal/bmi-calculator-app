@@ -1,16 +1,17 @@
-# test_flutter
+# BMI Calculator
 
-A new Flutter project.
+This is the flutter based application. It provides a simple and intuitive interface for users to input their age, weight, and height, allowing them to quickly determine their BMI score and understand their nutritional status.
 
-## Getting Started
+- Author: Ishan Rijal
+- Registration Number: 21UG1331
 
-This project is a starting point for a Flutter application.
+## How To Run App?
 
-A few resources to get you started if this is your first Flutter project:
+1. Clone the app to your PC.
+2. Navigate to the location and open the file in VSCode or any code editor.
+3. Then ensure flutter is installed in your PC.
+4. Intall all the dependencies using "flutter pub get" command.
+5. Run the flutter code.
+Horray! You have successfully run the BMI App.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+For feedback, reporting any bugs, or connecting with me, please email me at: ishanrijal6@gmail.com, 21ug1331@sltc.ac.lk.

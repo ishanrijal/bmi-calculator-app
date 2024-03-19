@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:test_flutter/pages/detail.dart';
 
+///This is the second screen of our App. This screen contains the final result of our calculation.
+
 /// Defined the Primary, Seconday and the Tertiary Color for the App.
 Color primaryColor = const Color.fromARGB(255, 201, 139, 139);
 Color secondaryColor = const Color.fromARGB(255, 57, 67, 161);

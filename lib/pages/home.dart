@@ -7,6 +7,7 @@ Color primaryColor = const Color.fromARGB(255, 201, 139, 139);
 Color secondaryColor = const Color.fromARGB(255, 57, 67, 161);
 Color hintColor = const Color.fromARGB(255, 227, 191, 191);
 
+///This is where all the states are defined. It is used for handling the states.
 class HomeController extends GetxController {
   // Define Rx variables
   var selectedGender = 'male'.obs;
@@ -59,6 +60,8 @@ class HomeController extends GetxController {
   }
 }
 
+/// Home screen that allows users to input their BMI parameters.
+/// We need to play with the states, thats why Home is using the StatefulWidget
 class Home extends StatelessWidget {
   Home({super.key});
 
@@ -81,6 +84,10 @@ class Home extends StatelessWidget {
         centerTitle: true,
         toolbarHeight: 80,
       ),
+
+      /// Used SingleChildScrollView Widget to prevent the Widget's overflow by allowing the body to be scrollable.
+      /// When User press the inputbox, then the keyboard will popup. This might lead to overflow. So, to prevent it, I have used this widget.
+
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.all(24),
@@ -436,6 +443,7 @@ class RightSideColumnState extends State<RightSideColumn> {
   }
 }
 
+/// Stateful Widget for selecting the Weight Unit i.e. either kg or pound(lb)
 class WeightUnitDropDown extends StatelessWidget {
   const WeightUnitDropDown({super.key});
   @override
@@ -462,6 +470,7 @@ class WeightUnitDropDown extends StatelessWidget {
   }
 }
 
+/// Stateful widget for the Height Unit Selection
 class HeightUnitDropDown extends StatelessWidget {
   const HeightUnitDropDown({super.key});
   @override
