@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_flutter/pages/detail.dart';
+import './detail.dart';
 
 ///This is the second screen of our App. This screen contains the final result of our calculation.
 
