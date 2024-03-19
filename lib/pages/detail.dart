@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
 
 Color primaryColor = const Color.fromARGB(255, 201, 139, 139);
 Color secondaryColor = const Color.fromARGB(255, 57, 67, 161);
@@ -11,20 +10,16 @@ var tableTextStyle1 = TextStyle(
   fontWeight: FontWeight.w500,
   fontFamily: 'Arial',
 );
+
 var tableHeadingStyle = const TextStyle(
   color: Colors.black,
   fontSize: 18,
   fontWeight: FontWeight.w900,
 );
 
-class Detail extends StatefulWidget {
-  const Detail({Key? key}) : super(key: key);
+class Detail extends StatelessWidget {
+  const Detail({super.key});
 
-  @override
-  _DetailState createState() => _DetailState();
-}
-
-class _DetailState extends State<Detail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,12 +34,9 @@ class _DetailState extends State<Detail> {
         ),
         leading: TextButton(
           onPressed: () {
-            // Navigate back to previous screen
             Navigator.pop(context);
           },
-          child: const Text(
-            "Back",
-          ),
+          child: const Text("Back"),
         ),
         centerTitle: true,
         toolbarHeight: 80,
@@ -56,7 +48,7 @@ class _DetailState extends State<Detail> {
             Table(
               border: TableBorder.all(color: hintColor),
               columnWidths: const {
-                0: FlexColumnWidth(1), // Adjust column width as needed
+                0: FlexColumnWidth(1),
                 1: FlexColumnWidth(1),
               },
               children: [
@@ -249,42 +241,6 @@ class _DetailState extends State<Detail> {
                   ],
                 ),
               ],
-            ),
-            const SizedBox(height: 48),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: const MaterialStatePropertyAll(
-                  Color.fromARGB(255, 57, 67, 161),
-                ),
-                shape: MaterialStatePropertyAll<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 32),
-                ),
-              ),
-              onPressed: () {
-                // Clear the state variables
-                setState(() {
-                  age = 0;
-                  weight = 0.0;
-                  height = 0.0;
-                });
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Home()),
-                  (route) => false,
-                );
-              },
-              child: const Text(
-                'Calculate BMI',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                ),
-              ),
             ),
           ],
         ),

@@ -1,29 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart'; // Import GetX package
 import 'bmi_result.dart';
 
-/// Defined the Primary, Seconday and the Tertiary Color for the App.
+/// Defined the Primary, Secondary, and Tertiary Color for the App.
 Color primaryColor = const Color.fromARGB(255, 201, 139, 139);
 Color secondaryColor = const Color.fromARGB(255, 57, 67, 161);
 Color hintColor = const Color.fromARGB(255, 227, 191, 191);
 
-/// Setting all the state variables.
-int age = 0;
-double weight = 0.0;
-double height = 0.0;
-String weightUnit = 'kg';
-String heightUnit = 'cm';
+class HomeController extends GetxController {
+  // Define Rx variables
+  var selectedGender = 'male'.obs;
+  var age = 0.obs;
+  var weight = 0.0.obs;
+  var height = 0.0.obs;
+  var weightUnit = 'kg'.obs;
+  var heightUnit = 'cm'.obs;
 
-/// Home screen that allows users to input their BMI parameters
-/// We need to play with the states, thats why Home is using the StatefulWidget
-class Home extends StatefulWidget {
-  const Home({super.key});
-  @override
-  _HomeState createState() => _HomeState();
+  void selectGender(String gender) {
+    selectedGender.value = gender;
+  }
+
+  void calculateBMI() {
+    List<String> missingFields = [];
+    // Check for missing fields
+    if (age.value == 0) missingFields.add('Age');
+    if (weight.value == 0.0) missingFields.add('Weight');
+    if (height.value == 0.0) missingFields.add('Height');
+
+    if (missingFields.isNotEmpty) {
+      String errorMessage =
+          'Please fill the following fields: ${missingFields.join(', ')}';
+      // Show error message
+      Get.snackbar(
+        '',
+        '',
+        snackPosition: SnackPosition.BOTTOM,
+        messageText: Text(
+          errorMessage,
+          style: const TextStyle(fontSize: 16.0, color: Colors.white),
+        ),
+        backgroundColor:
+            Colors.red[400], // Customize background color if needed
+        margin: EdgeInsets.zero, // Remove default margin
+        padding: const EdgeInsets.only(bottom: 12.0, left: 8.0, right: 8.0),
+        borderRadius: 0, // Remove border radius
+      );
+    } else {
+      // Navigate to BMI Result screen
+      Get.to(BmiResult(
+        age: age.value,
+        gender: selectedGender.value,
+        weight: weight.value,
+        height: height.value,
+        weightUnit: weightUnit.value,
+        heightUnit: heightUnit.value,
+      ));
+    }
+  }
 }
 
-class _HomeState extends State<Home> {
-  ///Initially setting gender to male.
-  String selectedGender = 'male';
+class Home extends StatelessWidget {
+  Home({super.key});
+
+  final HomeController controller =
+      Get.put(HomeController()); // Initialize controller
 
   @override
   Widget build(BuildContext context) {
@@ -33,44 +73,30 @@ class _HomeState extends State<Home> {
         title: Text(
           "BMI Calculator",
           style: TextStyle(
-              fontSize: 18, fontWeight: FontWeight.w700, color: secondaryColor),
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: secondaryColor,
+          ),
         ),
         centerTitle: true,
         toolbarHeight: 80,
       ),
-
-      /// I have used SingleChildScrollView Widget to prevent the Widget's overflow by allowing the body to be scrollable.
-      /// When User press the inputbox, then the keyboard will popup. This might lead to overflow. So, to prevent it, I have used this widget.
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.all(24),
           child: Column(
             children: [
-              Row(
+              const Row(
                 children: [
-                  //Two Expanded Widgets for the buttons.
-                  MaleButton(
-                      selectedGender: selectedGender,
-                      onPressed: () {
-                        setState(() {
-                          selectedGender = 'male';
-                        });
-                      }),
-                  FemaleButton(
-                      selectedGender: selectedGender,
-                      onPressed: () {
-                        setState(() {
-                          selectedGender = 'female';
-                        });
-                      }),
+                  MaleButton(),
+                  FemaleButton(),
                 ],
               ),
               const SizedBox(height: 16.0),
-              Row(
+              const Row(
                 children: [
-                  //Two Expanded Widgets for Columns
-                  LeftSideColumn(selectedGender: selectedGender),
-                  const RightSideColumn(),
+                  LeftSideColumn(),
+                  RightSideColumn(),
                 ],
               ),
               Row(
@@ -81,10 +107,10 @@ class _HomeState extends State<Home> {
                   Expanded(
                     child: ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor: const MaterialStatePropertyAll(
-                          Color.fromARGB(255, 57, 67, 161),
-                        ),
-                        shape: MaterialStatePropertyAll<RoundedRectangleBorder>(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(secondaryColor),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -93,47 +119,11 @@ class _HomeState extends State<Home> {
                           const EdgeInsets.symmetric(vertical: 16.0),
                         ),
                       ),
-                      onPressed: () {
-                        List<String> missingFields = [];
-
-                        // Check which fields are missing
-                        if (age == 0) {
-                          missingFields.add('Age');
-                        }
-                        if (weight == 0.0) {
-                          missingFields.add('Weight');
-                        }
-                        if (height == 0.0) {
-                          missingFields.add('Height');
-                        }
-                        if (missingFields.isNotEmpty) {
-                          String errorMessage =
-                              'Please fill the following fields: ${missingFields.join(', ')}';
-                          // Show error message
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(errorMessage),
-                            ),
-                          );
-                        } else {
-                          //Calculate BMI
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BmiResult(
-                                age: age,
-                                gender: selectedGender,
-                                weight: weight,
-                                height: height,
-                                weightUnit: weightUnit,
-                                heightUnit: heightUnit,
-                              ),
-                            ),
-                          );
-                        }
+                      onPressed: () => {
+                        controller.calculateBMI(),
                       },
                       child: const Text(
-                        'Calculate Button',
+                        'Calculate BMI',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18.0,
@@ -151,200 +141,138 @@ class _HomeState extends State<Home> {
   }
 }
 
-class WeightUnitDropDown extends StatefulWidget {
-  const WeightUnitDropDown({super.key});
-
-  @override
-  _WeightUnitDropDownState createState() => _WeightUnitDropDownState();
-}
-
-class _WeightUnitDropDownState extends State<WeightUnitDropDown> {
-  String selectedUnit = 'kg';
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: selectedUnit,
-      onChanged: (String? newValue) {
-        if (newValue != null) {
-          setState(() {
-            selectedUnit = newValue;
-            weightUnit = selectedUnit;
-          });
-        }
-      },
-      items: <String>['kg', 'lb'].map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
-  }
-}
-
-//For the Height Unit Dropdown Selection
-class HeightUnitDropDown extends StatefulWidget {
-  const HeightUnitDropDown({super.key});
-
-  @override
-  _HeightUnitDropDownState createState() => _HeightUnitDropDownState();
-}
-
-class _HeightUnitDropDownState extends State<HeightUnitDropDown> {
-  String selectedUnit = 'cm';
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: selectedUnit,
-      onChanged: (String? newValue) {
-        if (newValue != null) {
-          setState(() {
-            selectedUnit = newValue;
-            heightUnit = selectedUnit;
-          });
-        }
-      },
-      items: <String>['cm', 'ft'].map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
-  }
-}
-
-//This is the Male Selection Button
 class MaleButton extends StatelessWidget {
-  const MaleButton({
-    Key? key,
-    this.onPressed,
-    required this.selectedGender,
-  }) : super(key: key);
-
-  final VoidCallback? onPressed;
-  final String selectedGender;
-
+  const MaleButton({super.key});
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: InkWell(
-        onTap: onPressed,
-        child: Container(
-          decoration: BoxDecoration(
-            color: selectedGender == 'male' ? secondaryColor : Colors.white,
-            border: Border.all(
-              color: selectedGender == 'male' ? Colors.white : primaryColor,
-              width: 0,
-            ),
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(8.0),
-              bottomLeft: Radius.circular(8.0),
-            ),
-          ),
-          padding: const EdgeInsets.symmetric(
-            vertical: 12.0,
-            horizontal: 8.0,
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.male,
-                color: selectedGender == 'male' ? Colors.white : Colors.black,
-              ),
-              const SizedBox(width: 8.0),
-              Text(
-                "Male",
-                style: TextStyle(
-                  color: selectedGender == 'male' ? Colors.white : Colors.black,
+    return GetBuilder<HomeController>(
+      builder: (controller) => Expanded(
+        child: InkWell(
+          onTap: () => controller.selectGender('male'),
+          child: Obx(() {
+            return Container(
+              decoration: BoxDecoration(
+                color: controller.selectedGender.value == 'male'
+                    ? secondaryColor
+                    : Colors.white,
+                border: Border.all(
+                  color: controller.selectedGender.value == 'male'
+                      ? Colors.white
+                      : primaryColor,
+                  width: 0,
                 ),
-              )
-            ],
-          ),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(8.0),
+                  bottomLeft: Radius.circular(8.0),
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(
+                vertical: 12.0,
+                horizontal: 8.0,
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.male,
+                    color: controller.selectedGender.value == 'male'
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                  const SizedBox(width: 8.0),
+                  Text(
+                    "Male",
+                    style: TextStyle(
+                      color: controller.selectedGender.value == 'male'
+                          ? Colors.white
+                          : Colors.black,
+                    ),
+                  )
+                ],
+              ),
+            );
+          }),
         ),
       ),
     );
   }
 }
 
-//This is the Female Selection Button
 class FemaleButton extends StatelessWidget {
-  const FemaleButton({
-    required this.selectedGender,
-    required this.onPressed,
-    Key? key,
-  }) : super(key: key);
-
-  final String selectedGender;
-  final VoidCallback onPressed;
-
+  const FemaleButton({super.key});
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: InkWell(
-        onTap: onPressed,
-        child: Container(
-          decoration: BoxDecoration(
-            color: selectedGender == 'male' ? Colors.white : secondaryColor,
-            border: Border.all(
-              color: selectedGender == 'male' ? primaryColor : Colors.white,
-              width: 0,
-            ),
-            borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(8.0),
-              bottomRight: Radius.circular(8.0),
-            ),
-          ),
-          padding: const EdgeInsets.symmetric(
-            vertical: 12.0,
-            horizontal: 8.0,
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.female,
-                color: selectedGender == 'male' ? Colors.black : Colors.white,
-              ),
-              SizedBox(width: 8.0),
-              Text(
-                "Female",
-                style: TextStyle(
-                  color: selectedGender == 'male' ? Colors.black : Colors.white,
+    return GetBuilder<HomeController>(
+      builder: (controller) => Expanded(
+        child: InkWell(
+          onTap: () => controller.selectGender('female'),
+          child: Obx(() {
+            return Container(
+              decoration: BoxDecoration(
+                color: controller.selectedGender.value == 'male'
+                    ? Colors.white
+                    : secondaryColor,
+                border: Border.all(
+                  color: controller.selectedGender.value == 'male'
+                      ? primaryColor
+                      : Colors.white,
+                  width: 0,
                 ),
-              )
-            ],
-          ),
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(8.0),
+                  bottomRight: Radius.circular(8.0),
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(
+                vertical: 12.0,
+                horizontal: 8.0,
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.female,
+                    color: controller.selectedGender.value == 'male'
+                        ? Colors.black
+                        : Colors.white,
+                  ),
+                  const SizedBox(width: 8.0),
+                  Text(
+                    "Female",
+                    style: TextStyle(
+                      color: controller.selectedGender.value == 'male'
+                          ? Colors.black
+                          : Colors.white,
+                    ),
+                  )
+                ],
+              ),
+            );
+          }),
         ),
       ),
     );
   }
 }
-
-//Left Side COlumn for the Image
 
 class LeftSideColumn extends StatelessWidget {
-  final String selectedGender;
-
-  const LeftSideColumn({
-    required this.selectedGender,
-    Key? key,
-  }) : super(key: key);
-
+  const LeftSideColumn({super.key});
   @override
   Widget build(BuildContext context) {
-    String imagePath =
-        selectedGender == 'male' ? 'assets/male.png' : 'assets/female.png';
+    final controller = Get.find<HomeController>(); // Find HomeController
+
     return Expanded(
       flex: 1,
       child: Container(
         padding: const EdgeInsets.only(right: 26.0, top: 24),
         child: AspectRatio(
           aspectRatio: 1 / 3,
-          child: Image.asset(
-            imagePath,
-          ),
+          child: Obx(() {
+            String imagePath = controller.selectedGender.value == 'male'
+                ? 'assets/male.png'
+                : 'assets/female.png';
+            return Image.asset(
+              imagePath,
+            );
+          }),
         ),
       ),
     );
@@ -352,14 +280,21 @@ class LeftSideColumn extends StatelessWidget {
 }
 
 class RightSideColumn extends StatefulWidget {
-  const RightSideColumn({super.key});
+  const RightSideColumn({Key? key}) : super(key: key);
+
   @override
-  _RightSideColumnState createState() => _RightSideColumnState();
+  RightSideColumnState createState() => RightSideColumnState();
 }
 
-class _RightSideColumnState extends State<RightSideColumn> {
+class RightSideColumnState extends State<RightSideColumn> {
+  int age = 0;
+  double weight = 0.0;
+  double height = 0.0;
+
   @override
   Widget build(BuildContext context) {
+    final HomeController controller = Get.find(); // Access the HomeController
+
     return Expanded(
       flex: 1,
       child: Container(
@@ -386,11 +321,10 @@ class _RightSideColumnState extends State<RightSideColumn> {
             SizedBox(
               child: TextFormField(
                 onChanged: (value) {
-                  setState(
-                    () {
-                      age = int.tryParse(value) ?? 0;
-                    },
-                  );
+                  setState(() {
+                    age = int.tryParse(value) ?? 0;
+                  });
+                  controller.age.value = age; // Update age in HomeController
                 },
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
@@ -398,14 +332,11 @@ class _RightSideColumnState extends State<RightSideColumn> {
                   hintStyle: TextStyle(
                     color: hintColor,
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                    borderSide: BorderSide(color: primaryColor), // Border color
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        width: 0,
-                        color: secondaryColor), // Border color when focused
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(width: 0),
                   ),
                 ),
                 keyboardType: TextInputType.number,
@@ -435,6 +366,8 @@ class _RightSideColumnState extends State<RightSideColumn> {
                   setState(() {
                     weight = double.tryParse(value) ?? 0.0;
                   });
+                  controller.weight.value =
+                      weight; // Update weight in HomeController
                 },
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
@@ -442,14 +375,11 @@ class _RightSideColumnState extends State<RightSideColumn> {
                   hintStyle: TextStyle(
                     color: hintColor,
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                    borderSide: BorderSide(color: primaryColor), // Border color
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        width: 0,
-                        color: secondaryColor), // Border color when focused
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(width: 0),
                   ),
                 ),
                 keyboardType: TextInputType.number,
@@ -477,8 +407,10 @@ class _RightSideColumnState extends State<RightSideColumn> {
               child: TextFormField(
                 onChanged: (value) {
                   setState(() {
-                    height = double.tryParse(value) ?? 0;
+                    height = double.tryParse(value) ?? 0.0;
                   });
+                  controller.height.value =
+                      height; // Update height in HomeController
                 },
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
@@ -486,14 +418,11 @@ class _RightSideColumnState extends State<RightSideColumn> {
                   hintStyle: TextStyle(
                     color: hintColor,
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                    borderSide: BorderSide(color: primaryColor), // Border color
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        width: 0,
-                        color: secondaryColor), // Border color when focused
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(width: 0),
                   ),
                 ),
                 keyboardType: TextInputType.number,
@@ -504,5 +433,57 @@ class _RightSideColumnState extends State<RightSideColumn> {
         ),
       ),
     );
+  }
+}
+
+class WeightUnitDropDown extends StatelessWidget {
+  const WeightUnitDropDown({super.key});
+  @override
+  Widget build(BuildContext context) {
+    final HomeController controller = Get.find(); // Access the HomeController
+
+    return Obx(() {
+      return DropdownButton<String>(
+        value: controller.weightUnit.value,
+        onChanged: (String? newValue) {
+          if (newValue != null) {
+            controller.weightUnit.value = newValue;
+          }
+        },
+        items:
+            <String>['kg', 'lb'].map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+      );
+    });
+  }
+}
+
+class HeightUnitDropDown extends StatelessWidget {
+  const HeightUnitDropDown({super.key});
+  @override
+  Widget build(BuildContext context) {
+    final HomeController controller = Get.find(); // Access the HomeController
+
+    return Obx(() {
+      return DropdownButton<String>(
+        value: controller.heightUnit.value,
+        onChanged: (String? newValue) {
+          if (newValue != null) {
+            controller.heightUnit.value = newValue;
+          }
+        },
+        items:
+            <String>['cm', 'ft'].map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+      );
+    });
   }
 }
